@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tra cứu Seri</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column; /* Chỉnh lại để footer nằm dưới box */
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      width: 400px;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    }
+
+    /* CSS cho Logo */
+    .logo {
+      width: 200px; /* Bạn có thể tăng giảm kích thước ở đây */
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 22px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: green;
+      word-wrap: break-word;
+    }
+
+    /* CSS cho dòng Footer */
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #777;
+      font-style: italic;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <img src="MobiFone_logo.svg.png" alt="MobiFone Logo" class="logo">
+
+    <h2>Tra cứu Seri Reset thiết bị</h2>
+
+    <input
+      type="text"
+      id="seri"
+      placeholder="Nhập Seri">
+
+    <button onclick="searchSeri()">
+      Tra cứu
+    </button>
+
+    <div id="result"></div>
+  </div>
+
+  <div class="footer">
+    Phát triển bởi Nguyễn Đăng Khải - Mobifone Gia Lai
+  </div>
+  <div class="footer">
+    Lưu ý: "Không tìm thấy Seri" có thể do Seri chưa được đưa lên hệ thống Reset hoặc nhập sai Seri thiết bị.
+  </div>
+
+<script>
+async function searchSeri(){
+  const seri = document.getElementById("seri").value.trim();
+
+  if(seri == ""){
+    document.getElementById("result").innerHTML = "Vui lòng nhập Seri";
+    return;
+  }
+
+  document.getElementById("result").innerHTML = "Đang tra cứu...";
+
+  const api = "https://script.google.com/macros/s/AKfycbyR5gUhuqtshCnKREEAhXct6_mRNk3xS9RcpjWfBioCpWXD4ELPsBcZAhdm-SQqRALovw/exec";
+
+  try {
+    const response = await fetch(api + "?seri=" + encodeURIComponent(seri));
+    const data = await response.json();
+
+    const resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = data.result;
+
+    // Tự động đổi màu chữ dựa trên kết quả trả về
+    if (data.success === true && data.result !== "Loa chưa được Reset") {
+      resultDiv.style.color = "green"; // Màu xanh cho kết quả thành công
+    } else {
+      resultDiv.style.color = "red";   // Màu đỏ cho các thông báo "chưa được..." hoặc lỗi
+    }
+
+  } catch (error) {
+    document.getElementById("result").innerHTML = "Lỗi kết nối API";
+    document.getElementById("result").style.color = "red";
+    console.log(error);
+  }
+}
+</script>
+
+</body>
+</html>
